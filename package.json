@@ -1,0 +1,44 @@
+{
+  "name": "game-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "kk <a631953720@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
+    "migration:generate": "ts-node ./node_modules/typeorm/cli.js migration:create -n",
+    "test": "jest",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "knex": "^3.1.0",
+    "reflect-metadata": "^0.2.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.23.0",
+    "@types/express": "^5.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/knex": "^0.16.1",
+    "@types/node": "^22.13.11",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^16.0.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.2.6",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.27.0"
+  }
+}

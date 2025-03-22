@@ -1,0 +1,51 @@
+# node_modules - 所有安裝的第三方套件
+node_modules/
+
+# TypeScript 輸出目錄
+dist/
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# dotenv 環境變數檔案
+.env
+.env.local
+.env.*.local
+
+# SQLite 資料庫檔案
+*.sqlite
+
+# 日誌檔案
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 作業系統雜項
+.DS_Store
+Thumbs.db
+
+# VSCode 編輯器設定
+.vscode/
+
+# Jest 測試快照或 coverage
+coverage/
+*.lcov
+jest-test-results.json
+
+# Knex migration lock
+.knex*
+
+# PM2 process 管理的 log
+pids
+*.pid
+*.seed
+
+# 錯誤傾印檔
+*.stackdump
+core.*
+
+# 本地執行暫存檔
+tmp/
+temp/
+.idea

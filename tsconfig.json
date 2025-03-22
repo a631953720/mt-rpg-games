@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,      // 啟用 decorator
+    "emitDecoratorMetadata": true,        // 匯出裝飾器的類型資料 (TypeORM 需要)
+    "paths": {
+      "#/*": ["src/*"],
+      "#types/*": ["src/types/*"],
+      "#configs/*": ["src/configs/*"],
+      "#database/*": ["src/database/*"],
+      "#packages": ["src/packages"],
+      "#packages/*": ["src/packages/*"],
+    }
+  },
+  "include": ["src/**/*"]
+}
