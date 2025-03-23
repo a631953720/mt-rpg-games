@@ -21,6 +21,7 @@ export class Role implements IRole {
     actionBy: Role;
     actionType: ActionTypes;
   } | null;
+  private _actionLogs: string[];
 
   public constructor(data: BaseRole) {
     this.id = data.id;
@@ -36,6 +37,19 @@ export class Role implements IRole {
     this.name = data.name;
 
     this.beActionBy = null;
+    this._actionLogs = [];
+  }
+
+  public get actionLogs(): string[] {
+    return [...this._actionLogs];
+  }
+
+  public addActionLog(message: string): void {
+    this._actionLogs.push(message);
+  }
+
+  public resetActionLog(): void {
+    this._actionLogs = [];
   }
 
   public setActionBy(actionBy: Role, actionType: ActionTypes): this {

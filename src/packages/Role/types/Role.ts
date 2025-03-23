@@ -4,6 +4,10 @@ import { BaseRole } from './BaseRole';
 export type ActionTypes = 'attack';
 
 export interface Role extends BaseRole, Entity {
+  actionLogs: string[];
+  addActionLog(message: string): void;
+  resetActionLog(): void;
+
   isAlive(): boolean;
   isDodged(): boolean;
   isCritical(): boolean;
