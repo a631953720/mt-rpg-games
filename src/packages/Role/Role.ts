@@ -1,4 +1,5 @@
-import { ActionTypes, BaseRole, Role as IRole } from './types';
+import { ActionTypes } from '#packages/types';
+import { ActionBy, BaseRole, Role as IRole } from './types';
 
 export class Role implements IRole {
   public id: number | null;
@@ -12,15 +13,13 @@ export class Role implements IRole {
   public defense: number;
   public criticalRate: number;
   public dodgeRate: number;
+  public currentAction: ActionTypes | null;
 
   private readonly defaultAttackCoefficient = 1;
   private readonly defaultDefenseCoefficient = 1;
   private attackCoefficient = 1;
   private defenseCoefficient = 1;
-  private beActionBy: {
-    actionBy: Role;
-    actionType: ActionTypes;
-  } | null;
+  private _beActionBy: ActionBy | null;
   private _actionLogs: string[];
 
   public constructor(data: BaseRole) {
@@ -35,13 +34,18 @@ export class Role implements IRole {
     this.criticalRate = data.criticalRate;
     this.dodgeRate = data.dodgeRate;
     this.name = data.name;
+    this.currentAction = null;
 
-    this.beActionBy = null;
+    this._beActionBy = null;
     this._actionLogs = [];
   }
 
   public get actionLogs(): string[] {
     return [...this._actionLogs];
+  }
+
+  public get beActionBy(): ActionBy | null {
+    return this._beActionBy;
   }
 
   public addActionLog(message: string): void {
@@ -57,7 +61,7 @@ export class Role implements IRole {
       throw TypeError('beActionBy already set');
     }
 
-    this.beActionBy = {
+    this._beActionBy = {
       actionBy,
       actionType,
     };
@@ -75,7 +79,7 @@ export class Role implements IRole {
   }
 
   public resetActionBy(): this {
-    this.beActionBy = null;
+    this._beActionBy = null;
     return this;
   }
 

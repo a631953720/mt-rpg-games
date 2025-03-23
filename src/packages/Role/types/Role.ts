@@ -1,10 +1,16 @@
+import { ActionTypes } from '#/packages/types';
 import { Entity } from '#packages/BaseEntity';
 import { BaseRole } from './BaseRole';
 
-export type ActionTypes = 'attack';
+export type ActionBy = {
+  actionBy: Role;
+  actionType: ActionTypes;
+};
 
 export interface Role extends BaseRole, Entity {
+  beActionBy: ActionBy | null;
   actionLogs: string[];
+  currentAction: ActionTypes | null;
   addActionLog(message: string): void;
   resetActionLog(): void;
 

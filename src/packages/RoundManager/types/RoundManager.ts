@@ -1,8 +1,13 @@
+import { ActionTypes } from '#/packages/types';
 import { Role } from '#packages';
 
-export type ActionCallback = (role: Role) => void;
+export type RoleWillDoOptions = {
+  role: Role;
+  actionType: ActionTypes;
+  target: Role;
+};
 
 export interface RoundManager {
-  assignRoleActions(role: Role, callbacks: ActionCallback[]): void;
-  consumeRoleActions(role: Role | Role[]): void;
+  roleWillDo(options: RoleWillDoOptions): void;
+  calculateRoleActionsFromActionBy(role: Role | Role[]): void;
 }

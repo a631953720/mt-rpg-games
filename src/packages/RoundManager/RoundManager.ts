@@ -1,46 +1,46 @@
 import { Role } from '#Role';
-import { ActionCallback, RoundManager as IRoundManager } from './types';
+import { RoleWillDoOptions, RoundManager as IRoundManager } from './types';
+import { damageCalculator, hpCalculator } from './helpers';
 
 export class RoundManager implements IRoundManager {
-  private inActionRoles: Set<Role>;
-  private roleActions: Map<Role, ActionCallback[]>;
-
-  public constructor() {
-    this.inActionRoles = new Set();
-    this.roleActions = new Map();
-  }
-
-  public assignRoleActions(role: Role, callbacks: ActionCallback[]): void {
-    if (this.inActionRoles.has(role)) {
-      throw new Error(`${role.id} is still action`);
+  public roleWillDo({ role, actionType, target }: RoleWillDoOptions): void {
+    if (role.currentAction !== null) {
+      throw new Error(`${role.name} has been action: ${role.currentAction}`);
     }
 
-    const roleCallbacks = this.roleActions.get(role) ?? [];
-    roleCallbacks.push(...callbacks);
-    this.roleActions.set(role, roleCallbacks);
+    if (actionType === 'attack') {
+      role.attackTo(target);
+      role.addActionLog(`${role.name} 攻擊了 ${target.name}`);
+    } else if (actionType === 'defense') {
+      role.useDefense();
+      role.addActionLog(`${role.name} 使用了防禦`);
+    }
   }
 
-  public consumeRoleActions(role: Role | Role[]): void {
+  public calculateRoleActionsFromActionBy(role: Role | Role[]): void {
     const roles = Array.isArray(role) ? role : [role];
 
-    roles.forEach((r) => {
-      if (this.inActionRoles.has(r)) {
-        throw new Error(`${r.id} is still action`);
-      }
-      this.inActionRoles.add(r);
-
-      const callbacks = this.roleActions.get(r) ?? [];
-      if (callbacks.length === 0) {
-        this.inActionRoles.delete(r);
+    roles.forEach((currentRole) => {
+      if (currentRole.beActionBy === null) {
         return;
       }
 
-      callbacks.forEach((callback) => {
-        if (!r.isAlive()) return;
+      const { actionBy, actionType } = currentRole.beActionBy;
 
-        callback(r);
-      });
-      this.inActionRoles.delete(r);
+      if (actionType === 'attack') {
+        const dmg = damageCalculator(actionBy as Role, currentRole);
+        currentRole.addActionLog(`${actionBy.name} 造成了 ${dmg} 傷害.`);
+
+        hpCalculator({
+          role: currentRole,
+          affectHp: dmg * -1,
+          shouldResetActionBy: true,
+        });
+
+        if (currentRole.currentAction === 'defense') {
+          currentRole.resetDefenseCoefficient();
+        }
+      }
     });
   }
 }
