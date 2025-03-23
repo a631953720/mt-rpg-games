@@ -5,6 +5,8 @@ export type ActionTypes = 'attack';
 
 export interface Role extends BaseRole, Entity {
   isAlive(): boolean;
+  isDodged(): boolean;
+  isCritical(): boolean;
   attackTo(target: Role): void;
   useDefense(): void;
 

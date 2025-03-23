@@ -108,4 +108,20 @@ export class Role implements IRole {
   public isNew(): boolean {
     return !this.id;
   }
+
+  public isDodged(): boolean {
+    if (this.dodgeRate < 0) return false;
+
+    const dodgeRate = this.dodgeRate >= 0.8 ? 0.8 : this.dodgeRate;
+
+    return Math.random() < dodgeRate;
+  }
+
+  public isCritical(): boolean {
+    if (this.criticalRate < 0) return false;
+
+    const criticalRate = this.criticalRate >= 0.8 ? 0.8 : this.criticalRate;
+
+    return Math.random() < criticalRate;
+  }
 }

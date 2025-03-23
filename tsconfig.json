@@ -17,6 +17,14 @@
       "#database/*": ["src/database/*"],
       "#packages": ["src/packages"],
       "#packages/*": ["src/packages/*"],
+      "#BaseEntity": ["src/packages/BaseEntity"],
+      "#BaseEntity/*": ["src/packages/BaseEntity/*"],
+      "#Player": ["src/packages/Player"],
+      "#Player/*": ["src/packages/Player/*"],
+      "#Role/*": ["src/packages/Role/*"],
+      "#Role": ["src/packages/Role"],
+      "#RoundManager": ["src/packages/RoundManager"],
+      "#RoundManager/*": ["src/packages/RoundManager/*"],
     }
   },
   "include": ["src/**/*"]
