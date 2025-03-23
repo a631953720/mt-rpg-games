@@ -51,3 +51,5 @@ function runOneRound() {
 }
 
 runOneRound();
+
+// TODO: 要實作 monster 類別來互動
