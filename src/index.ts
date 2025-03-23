@@ -5,8 +5,10 @@ import {
   hpCalculator,
   ActionCallback,
 } from '#RoundManager';
+import { generateMonsterByLevel, MonsterFactory } from '#Monster';
 
 const playerFactory = new PlayerFactory();
+const monsterFactory = new MonsterFactory();
 const roundManager = new RoundManager();
 
 function runOneRound() {
@@ -15,21 +17,24 @@ function runOneRound() {
     criticalRate: 1,
     attack: 1000,
   });
-  const p2 = playerFactory.createDefault({ name: 'player 2', dodgeRate: 0 });
+  const monster = monsterFactory.createDefault(
+    generateMonsterByLevel('史萊姆', 10),
+  );
+  console.log(monster);
 
   const p1Actions: ActionCallback[] = [];
-  const p2Actions: ActionCallback[] = [];
+  const monsterActions: ActionCallback[] = [];
 
   p1Actions.push((role) => {
-    role.attackTo(p2);
-    role.addActionLog(`${role.name} 攻擊了 ${p2.name}`);
+    role.attackTo(monster);
+    role.addActionLog(`${role.name} 攻擊了 ${monster.name}`);
   });
 
-  p2Actions.push((role) => {
+  monsterActions.push((role) => {
     role.useDefense();
     role.addActionLog(`${role.name} 使用了防禦`);
 
-    const dmg = damageCalculator(p1, p2);
+    const dmg = damageCalculator(p1, monster);
     role.addActionLog(`${p1.name} 造成了 ${dmg} 傷害.`);
 
     hpCalculator({
@@ -38,16 +43,16 @@ function runOneRound() {
       shouldResetActionBy: true,
     });
 
-    p2.resetDefenseCoefficient();
+    monster.resetDefenseCoefficient();
   });
 
   roundManager.assignRoleActions(p1, p1Actions);
-  roundManager.assignRoleActions(p2, p2Actions);
+  roundManager.assignRoleActions(monster, monsterActions);
 
-  roundManager.consumeRoleActions([p1, p2]);
+  roundManager.consumeRoleActions([p1, monster]);
 
   // console.log(p1, p2);
-  const finalActionLogs = [...p1.actionLogs, ...p2.actionLogs];
+  const finalActionLogs = [...p1.actionLogs, ...monster.actionLogs];
   console.log(finalActionLogs);
 }
 

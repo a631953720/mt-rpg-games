@@ -25,6 +25,8 @@
       "#Role": ["src/packages/Role"],
       "#RoundManager": ["src/packages/RoundManager"],
       "#RoundManager/*": ["src/packages/RoundManager/*"],
+      "#Monster": ["src/packages/Monster"],
+      "#Monster/*": ["src/packages/Monster/*"],
     }
   },
   "include": ["src/**/*"]
