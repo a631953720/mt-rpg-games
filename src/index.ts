@@ -10,8 +10,12 @@ const playerFactory = new PlayerFactory();
 const roundManager = new RoundManager();
 
 function runOneRound() {
-  const p1 = playerFactory.createDefault({ name: 'player 1', criticalRate: 1 });
-  const p2 = playerFactory.createDefault({ name: 'player 2', dodgeRate: 1 });
+  const p1 = playerFactory.createDefault({
+    name: 'player 1',
+    criticalRate: 1,
+    attack: 1000,
+  });
+  const p2 = playerFactory.createDefault({ name: 'player 2', dodgeRate: 0 });
 
   const p1Actions: ActionCallback[] = [];
   const p2Actions: ActionCallback[] = [];
@@ -26,15 +30,13 @@ function runOneRound() {
     role.addActionLog(`${role.name} 使用了防禦`);
 
     const dmg = damageCalculator(p1, p2);
+    role.addActionLog(`${p1.name} 造成了 ${dmg} 傷害.`);
+
     hpCalculator({
       role,
       affectHp: dmg * -1,
       shouldResetActionBy: true,
     });
-
-    role.addActionLog(
-      `${p1.name} 造成了 ${dmg} 傷害. ${p2.name} 剩餘 ${p2.hp} 血量`,
-    );
 
     p2.resetDefenseCoefficient();
   });
@@ -42,8 +44,7 @@ function runOneRound() {
   roundManager.assignRoleActions(p1, p1Actions);
   roundManager.assignRoleActions(p2, p2Actions);
 
-  roundManager.consumeRoleActions(p1);
-  roundManager.consumeRoleActions(p2);
+  roundManager.consumeRoleActions([p1, p2]);
 
   // console.log(p1, p2);
   const finalActionLogs = [...p1.actionLogs, ...p2.actionLogs];

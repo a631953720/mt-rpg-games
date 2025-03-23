@@ -17,5 +17,11 @@ export function hpCalculator({
     role.resetActionBy();
   }
 
+  role.addActionLog(`${role.name} 剩餘 ${role.hp} 血量`);
+
+  if (!role.isAlive()) {
+    role.addActionLog(`${role.name} 已死亡`);
+  }
+
   return role;
 }

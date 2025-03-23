@@ -20,23 +20,27 @@ export class RoundManager implements IRoundManager {
     this.roleActions.set(role, roleCallbacks);
   }
 
-  public consumeRoleActions(role: Role): void {
-    if (this.inActionRoles.has(role)) {
-      throw new Error(`${role.id} is still action`);
-    }
-    this.inActionRoles.add(role);
+  public consumeRoleActions(role: Role | Role[]): void {
+    const roles = Array.isArray(role) ? role : [role];
 
-    const callbacks = this.roleActions.get(role) ?? [];
-    if (callbacks.length === 0) {
-      this.inActionRoles.delete(role);
-      return;
-    }
+    roles.forEach((r) => {
+      if (this.inActionRoles.has(r)) {
+        throw new Error(`${r.id} is still action`);
+      }
+      this.inActionRoles.add(r);
 
-    callbacks.forEach((callback) => {
-      if (!role.isAlive()) return;
+      const callbacks = this.roleActions.get(r) ?? [];
+      if (callbacks.length === 0) {
+        this.inActionRoles.delete(r);
+        return;
+      }
 
-      callback(role);
+      callbacks.forEach((callback) => {
+        if (!r.isAlive()) return;
+
+        callback(r);
+      });
+      this.inActionRoles.delete(r);
     });
-    this.inActionRoles.delete(role);
   }
 }
