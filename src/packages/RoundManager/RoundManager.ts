@@ -60,6 +60,10 @@ export class RoundManager implements IRoundManager {
       role.useDefense();
       role.addActionLog(`${role.name} 使用了防禦`);
       gameLogs.push(`${role.name} 使用了防禦`);
+    } else if (actionType === 'rest') {
+      role.useRest();
+      role.addActionLog(`${role.name} 休息一下並恢復血量`);
+      gameLogs.push(`${role.name} 休息一下並恢復血量`);
     }
   }
 

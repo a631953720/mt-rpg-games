@@ -45,6 +45,13 @@ export async function playerDoAction(
         target: player,
         gameLogs,
       });
+    } else if (action === 'rest') {
+      roundManager.roleWillDo({
+        role: player,
+        actionType: 'rest',
+        target: player,
+        gameLogs,
+      });
     } else {
       res.status(400).json({ errors: [`un-support ${action} action`] });
       return;

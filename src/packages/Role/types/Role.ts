@@ -19,6 +19,7 @@ export interface Role extends BaseRole, Entity {
   isCritical(): boolean;
   attackTo(target: Role): void;
   useDefense(): void;
+  useRest(): void;
 
   setAttackCoefficient(coefficient: number): this;
   setDefenseCoefficient(coefficient: number): this;

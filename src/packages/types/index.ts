@@ -1,1 +1,1 @@
-export type ActionTypes = 'attack' | 'defense';
+export type ActionTypes = 'attack' | 'defense' | 'rest';

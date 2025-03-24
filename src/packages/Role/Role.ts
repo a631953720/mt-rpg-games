@@ -105,6 +105,17 @@ export class Role implements IRole {
     this.setDefenseCoefficient(this.defenseCoefficient + 0.2);
   }
 
+  public useRest(): void {
+    if (this.currentAction !== null) {
+      throw new Error(`${this.name} already has action ${this.currentAction}`);
+    }
+
+    this.currentAction = 'rest';
+    const finalHp = this.hp + Math.floor(this.maxHp / 4);
+
+    this.hp = finalHp > this.maxHp ? this.maxHp : finalHp;
+  }
+
   public setAttackCoefficient(coefficient: number): this {
     if (coefficient < 0) {
       this.attackCoefficient = 0;
