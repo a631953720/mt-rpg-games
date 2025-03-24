@@ -88,10 +88,20 @@ export class Role implements IRole {
   }
 
   public attackTo(target: Role): void {
+    if (this.currentAction !== null) {
+      throw new Error(`${this.name} already has action ${this.currentAction}`);
+    }
+
+    this.currentAction = 'attack';
     target.setActionBy(this, 'attack');
   }
 
   public useDefense(): void {
+    if (this.currentAction !== null) {
+      throw new Error(`${this.name} already has action ${this.currentAction}`);
+    }
+
+    this.currentAction = 'defense';
     this.setDefenseCoefficient(this.defenseCoefficient + 0.2);
   }
 

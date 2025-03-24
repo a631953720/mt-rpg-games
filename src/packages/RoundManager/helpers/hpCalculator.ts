@@ -4,12 +4,14 @@ type Options = {
   role: Role;
   affectHp: number;
   shouldResetActionBy: boolean;
+  gameLogs: string[];
 };
 
 export function hpCalculator({
   role,
   shouldResetActionBy,
   affectHp,
+  gameLogs,
 }: Options): Role {
   role.hp += affectHp;
 
@@ -17,10 +19,10 @@ export function hpCalculator({
     role.resetActionBy();
   }
 
-  role.addActionLog(`${role.name} 剩餘 ${role.hp} 血量`);
+  gameLogs.push(`${role.name} 剩餘 ${role.hp} 血量`);
 
   if (!role.isAlive()) {
-    role.addActionLog(`${role.name} 已死亡`);
+    gameLogs.push(`${role.name} 已死亡`);
   }
 
   return role;

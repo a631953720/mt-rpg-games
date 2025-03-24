@@ -1,6 +1,6 @@
-import { RoundManager } from './RoundManager';
+import { RoundManager, roundManager } from './RoundManager';
 
 export * from './helpers';
 export * from './types';
 
-export { RoundManager };
+export { RoundManager, roundManager };

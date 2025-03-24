@@ -28,6 +28,7 @@ export class Monster extends Role implements IPlayer {
       maxMp: this.maxMp,
       mp: this.mp,
       exp: this.exp,
+      name: this.name,
     };
   }
 
@@ -38,12 +39,13 @@ export class Monster extends Role implements IPlayer {
       defense: this.defense,
       dodgeRate: this.dodgeRate,
       hp: this.hp,
-      id: this.id,
+      id: Number(this.id),
       level: this.level,
       maxHp: this.maxHp,
       maxMp: this.maxMp,
       mp: this.mp,
       exp: this.exp,
+      name: this.name,
     };
   }
 }

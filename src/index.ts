@@ -1,9 +1,28 @@
 import express, { Request, Response } from 'express';
+import session from 'express-session';
 import { app } from '#configs';
 import apiV1 from '#services/routers';
 import { globalErrorHandler } from '#services/middlewares';
 
 const service = express();
+
+const oneDaySeconds = 60 * 60 * 1000;
+
+// 一般服務沒有掛 https，就算 cookie secure = true 也無效
+// 若是掛在反向代理後，則需要 trust proxy
+service.set('trust proxy', 1);
+service.use(
+  session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      maxAge: oneDaySeconds * 1000,
+      sameSite: true,
+    },
+  }),
+);
 
 service.use(express.json());
 service.use('/api/v1', apiV1);
@@ -19,7 +38,7 @@ service.listen(app.port, () => {
 });
 
 // import { PlayerFactory } from '#Player';
-// import { RoundManager } from '#RoundManager';
+// import { RoundManager, FullGameState } from '#RoundManager';
 // import { generateMonsterByLevel, MonsterFactory } from '#Monster';
 //
 // const playerFactory = new PlayerFactory();
@@ -27,32 +46,39 @@ service.listen(app.port, () => {
 // const roundManager = new RoundManager();
 //
 // function runOneRound2() {
-//   const p1 = playerFactory.createDefault({
+//   const player = playerFactory.createDefault({
 //     name: 'player 1',
 //     criticalRate: 1,
-//     attack: 100,
+//     attack: 1000,
+//     currentExp: 50,
 //   });
 //   const monster = monsterFactory.createDefault(
 //     generateMonsterByLevel('史萊姆', 10),
 //   );
 //
+//   const gameState: FullGameState = {
+//     player,
+//     monster,
+//     gameLogs: [],
+//   };
+//
 //   roundManager.roleWillDo({
-//     role: p1,
+//     role: player,
 //     actionType: 'attack',
 //     target: monster,
+//     gameLogs: gameState.gameLogs,
 //   });
 //
 //   roundManager.roleWillDo({
 //     role: monster,
 //     actionType: 'defense',
 //     target: monster,
+//     gameLogs: gameState.gameLogs,
 //   });
 //
-//   roundManager.calculateRoleActionsFromActionBy([p1, monster]);
+//   roundManager.calculateRound(gameState, true);
 //
-//   // console.log(p1, p2);
-//   const finalActionLogs = [...p1.actionLogs, ...monster.actionLogs];
-//   console.log(finalActionLogs);
+//   console.log(gameState);
 // }
 //
 // runOneRound2();

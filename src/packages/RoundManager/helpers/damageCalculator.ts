@@ -1,8 +1,14 @@
 import { Role } from '#packages';
 
-export function damageCalculator(role: Role, target: Role): number {
+type Options = {
+  role: Role;
+  target: Role;
+  gameLogs: string[];
+};
+
+export function damageCalculator({ role, target, gameLogs }: Options): number {
   if (target.isDodged()) {
-    target.addActionLog(`${target.name} 躲避了攻擊`);
+    gameLogs.push(`${target.name} 躲避了攻擊`);
     return 0;
   }
 
@@ -11,8 +17,11 @@ export function damageCalculator(role: Role, target: Role): number {
 
   if (role.isCritical()) {
     dmg = dmg * 1.2;
-    target.addActionLog(`${role.name} 爆擊！`);
+    gameLogs.push(`${role.name} 爆擊！`);
   }
+
+  role.addActionLog(`${role.name} 造成了 ${dmg} 傷害.`);
+  gameLogs.push(`${role.name} 造成了 ${dmg} 傷害.`);
 
   return dmg;
 }

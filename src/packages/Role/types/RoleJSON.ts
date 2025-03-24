@@ -1,5 +1,6 @@
 export interface RoleJSON {
-  id: number | null;
+  id: number;
+  name: string;
   level: number;
   hp: number;
   maxHp: number;

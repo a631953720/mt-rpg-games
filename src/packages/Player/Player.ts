@@ -31,6 +31,7 @@ export class Player extends Role implements IPlayer {
       mp: this.mp,
       currentExp: this.currentExp,
       nextLevelExp: this.nextLevelExp,
+      name: this.name,
     };
   }
 
@@ -41,13 +42,14 @@ export class Player extends Role implements IPlayer {
       defense: this.defense,
       dodgeRate: this.dodgeRate,
       hp: this.hp,
-      id: this.id,
+      id: Number(this.id),
       level: this.level,
       maxHp: this.maxHp,
       maxMp: this.maxMp,
       mp: this.mp,
       currentExp: this.currentExp,
       nextLevelExp: this.nextLevelExp,
+      name: this.name,
     };
   }
 }

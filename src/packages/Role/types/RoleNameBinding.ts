@@ -1,5 +1,6 @@
 export interface RoleNameBinding {
   id: number | null;
+  name: string;
   level: number;
   hp: number;
   maxHp: number;

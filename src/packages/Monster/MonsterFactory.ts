@@ -21,3 +21,5 @@ export class MonsterFactory implements IPlayerFactory {
     });
   }
 }
+
+export const monsterFactory = new MonsterFactory();
