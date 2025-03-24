@@ -2,11 +2,13 @@ import { Role } from '#Role';
 import {
   BaseGameState,
   FullGameState,
+  MergedGameState,
   RoleWillDoOptions,
   RoundManager as IRoundManager,
 } from './types';
 import { damageCalculator, hpCalculator } from './helpers';
 import { Player } from '#Player';
+import { Monster } from '#Monster';
 
 export class RoundManager implements IRoundManager {
   public static generateGameState(
@@ -16,6 +18,27 @@ export class RoundManager implements IRoundManager {
     return {
       player,
       gameLogs: gameLogs ?? [],
+    };
+  }
+
+  public static fromGameState(gameState: FullGameState): FullGameState;
+  public static fromGameState(gameState: BaseGameState): BaseGameState;
+  public static fromGameState(
+    gameState: BaseGameState | FullGameState,
+  ): BaseGameState | FullGameState {
+    // @ts-expect-error
+    if (gameState.monster) {
+      return {
+        player: new Player(gameState.player),
+        // @ts-expect-error
+        monster: new Monster(gameState.monster),
+        gameLogs: gameState.gameLogs,
+      };
+    }
+
+    return {
+      player: new Player(gameState.player),
+      gameLogs: gameState.gameLogs,
     };
   }
 
@@ -53,6 +76,11 @@ export class RoundManager implements IRoundManager {
 
       const { actionBy, actionType } = currentRole.beActionBy;
 
+      if (!actionBy.isAlive()) {
+        gameLogs.push(`因 ${actionBy.name} 已死亡，${actionType} 指令沒有執行`);
+        return;
+      }
+
       if (actionType === 'attack') {
         const dmg = damageCalculator({
           role: actionBy as Role,
@@ -77,7 +105,7 @@ export class RoundManager implements IRoundManager {
   public calculateRound(
     gameState: FullGameState,
     shouldResetCurrentAction: boolean,
-  ): FullGameState {
+  ): MergedGameState {
     const { player, monster, gameLogs } = gameState;
 
     if (player.currentAction === null || monster.currentAction === null) {
@@ -85,7 +113,7 @@ export class RoundManager implements IRoundManager {
       return gameState;
     }
 
-    this.calculateRoleActionsFromActionBy([player, monster], gameLogs);
+    this.calculateRoleActionsFromActionBy([monster, player], gameLogs);
 
     // monster is dead, player can get exp
     if (!monster.isAlive()) {
@@ -114,6 +142,13 @@ export class RoundManager implements IRoundManager {
     if (shouldResetCurrentAction) {
       player.currentAction = null;
       monster.currentAction = null;
+    }
+
+    if (!monster.isAlive()) {
+      return {
+        player,
+        gameLogs: [],
+      };
     }
 
     return {

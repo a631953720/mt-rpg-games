@@ -1,31 +1,33 @@
 import { Request, Response } from 'express';
 import { SessionData } from 'express-session';
-import { FullGameState, roundManager } from '#RoundManager';
-import { Player } from '#Player';
-import { Monster } from '#Monster';
+import { MergedGameState, roundManager } from '#RoundManager';
 
 export async function playerDoAction(
   req: Request,
-  res: Response,
+  res: Response<any, { gameStage: MergedGameState | null }>,
 ): Promise<void> {
   try {
+    const gameState = res.locals.gameStage;
+
     // TODO: add validator
     const { action } = req.query;
-    const gameState = (
-      req.session as SessionData & { gameState?: FullGameState }
-    )?.gameState;
 
     if (!gameState) {
       res.status(400).json({ errors: ['missing game state'] });
       return;
     }
 
-    const player = new Player(gameState.player);
-    const monster = new Monster(gameState.monster);
-    const { gameLogs } = gameState;
+    if (!gameState.monster) {
+      res
+        .status(400)
+        .json({ errors: ['missing monster state. please start a game'] });
+      return;
+    }
+
+    const { player, monster, gameLogs } = gameState;
 
     if (!monster.isAlive() || !player.isAlive()) {
-      res.status(400).json({ errors: ['invalid game state'] });
+      res.status(400).json({ errors: ['someone dead. can not do anything'] });
       return;
     }
 
@@ -75,7 +77,7 @@ export async function playerDoAction(
       true,
     );
 
-    (req.session as SessionData & { gameState?: FullGameState }).gameState =
+    (req.session as SessionData & { gameState?: MergedGameState }).gameState =
       newGameState;
 
     res.status(201).json({ data: newGameState });

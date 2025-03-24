@@ -18,6 +18,10 @@ export type FullGameState = BaseGameState & {
   monster: Monster;
 };
 
+export type MergedGameState = BaseGameState & {
+  monster?: Monster;
+};
+
 export interface RoundManager {
   roleWillDo(options: RoleWillDoOptions): void;
   calculateRoleActionsFromActionBy(
@@ -27,5 +31,5 @@ export interface RoundManager {
   calculateRound(
     gameState: FullGameState,
     shouldResetCurrentAction: boolean,
-  ): FullGameState;
+  ): MergedGameState;
 }

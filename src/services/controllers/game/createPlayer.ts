@@ -1,10 +1,20 @@
 import { SessionData } from 'express-session';
 import { Request, Response } from 'express';
 import { PlayerFactory } from '#Player';
-import { BaseGameState, RoundManager } from '#RoundManager';
+import { BaseGameState, MergedGameState, RoundManager } from '#RoundManager';
 
-export async function createPlayer(req: Request, res: Response): Promise<void> {
+export async function createPlayer(
+  req: Request,
+  res: Response<any, { gameStage: MergedGameState | null }>,
+): Promise<void> {
   try {
+    if (res.locals.gameStage) {
+      res
+        .status(400)
+        .json({ errors: ['can not create player during in the game'] });
+      return;
+    }
+
     // TODO: add validator
     const data = req.body;
 
