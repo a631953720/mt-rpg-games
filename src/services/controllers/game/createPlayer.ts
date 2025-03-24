@@ -5,10 +5,10 @@ import { BaseGameState, MergedGameState, RoundManager } from '#RoundManager';
 
 export async function createPlayer(
   req: Request,
-  res: Response<any, { gameStage: MergedGameState | null }>,
+  res: Response<any, { gameState: MergedGameState | null }>,
 ): Promise<void> {
   try {
-    if (res.locals.gameStage) {
+    if (res.locals.gameState) {
       res
         .status(400)
         .json({ errors: ['can not create player during in the game'] });

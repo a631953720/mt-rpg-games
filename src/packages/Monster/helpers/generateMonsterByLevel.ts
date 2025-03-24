@@ -23,7 +23,7 @@ export function generateMonsterByLevel(
     maxHp: hp,
     maxMp: mp,
     mp,
-    exp: Math.floor(10 + (10 * level) / 2),
+    exp: Math.floor(20 * level * (Math.random() * 2)),
     name,
   };
 }

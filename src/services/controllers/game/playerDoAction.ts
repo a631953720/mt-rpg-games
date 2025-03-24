@@ -4,10 +4,10 @@ import { MergedGameState, roundManager } from '#RoundManager';
 
 export async function playerDoAction(
   req: Request,
-  res: Response<any, { gameStage: MergedGameState | null }>,
+  res: Response<any, { gameState: MergedGameState | null }>,
 ): Promise<void> {
   try {
-    const gameState = res.locals.gameStage;
+    const gameState = res.locals.gameState;
 
     // TODO: add validator
     const { action } = req.query;

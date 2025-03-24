@@ -1,0 +1,26 @@
+#container {
+    display: flex;
+    gap: 20px; /* 元素之間的間距 */
+    padding: 20px;
+}
+
+#information,
+#gameLog {
+    flex: 1; /* 兩邊平均寬度，可依需求調整 */
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+#information {
+    /* 可依照需求調整成偏窄或偏寬 */
+}
+
+#gameLog {
+    white-space: pre-line; /* 保留換行符號 */
+    font-family: monospace;
+    background-color: #fffbe6;
+}

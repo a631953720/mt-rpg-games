@@ -4,11 +4,11 @@ import { MergedGameState, RoundManager } from '#/packages';
 
 export function parseGameState(
   req: Request,
-  res: Response<any, { gameStage: MergedGameState | null }>,
+  res: Response<any, { gameState: MergedGameState | null }>,
   next: NextFunction,
 ) {
   const gameState = getGameState(req);
-  res.locals.gameStage = gameState
+  res.locals.gameState = gameState
     ? RoundManager.fromGameState(gameState)
     : null;
   next();

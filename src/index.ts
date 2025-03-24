@@ -1,5 +1,7 @@
+import cors from 'cors';
 import express, { Request, Response } from 'express';
 import session from 'express-session';
+import path from 'path';
 import { app } from '#configs';
 import apiV1 from '#services/routers';
 import { globalErrorHandler } from '#services/middlewares';
@@ -7,6 +9,14 @@ import { globalErrorHandler } from '#services/middlewares';
 const service = express();
 
 const oneDaySeconds = 60 * 60 * 1000;
+
+// TODO: add specific cors domain
+service.use(
+  cors({
+    credentials: true,
+  }),
+);
+service.use(express.static(path.join(__dirname, 'public')));
 
 // 一般服務沒有掛 https，就算 cookie secure = true 也無效
 // 若是掛在反向代理後，則需要 trust proxy

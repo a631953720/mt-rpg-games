@@ -10,9 +10,9 @@ import { makeRandomStage1Monster } from '#Monster';
 
 export async function startGame(
   req: Request,
-  res: Response<any, { gameStage: MergedGameState | null }>,
+  res: Response<any, { gameState: MergedGameState | null }>,
 ): Promise<void> {
-  if (res.locals.gameStage?.monster) {
+  if (res.locals.gameState?.monster) {
     res
       .status(400)
       .json({ errors: ['can not start game during in the fight'] });
@@ -31,6 +31,7 @@ export async function startGame(
     ...gameState,
     // TODO: 根據玩家等級選擇不同階段
     monster: makeRandomStage1Monster(gameState.player.level - 1),
+    gameLogs: [],
   });
 
   (req.session as SessionData & { gameState?: FullGameState }).gameState =

@@ -151,7 +151,7 @@ export class RoundManager implements IRoundManager {
     if (!monster.isAlive()) {
       return {
         player,
-        gameLogs: [],
+        gameLogs,
       };
     }
 
