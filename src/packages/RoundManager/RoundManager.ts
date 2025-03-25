@@ -245,6 +245,8 @@ export class RoundManager implements IRoundManager {
     [monster, player].forEach((r) => {
       r.resetAttackCoefficient();
       r.resetDefenseCoefficient();
+      r.resetActionBy();
+      r.resetActionBySelf();
     });
 
     return {
