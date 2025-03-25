@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getGameState } from './helpers';
+import { getGameState } from '#utils';
 import { MergedGameState, RoundManager } from '#/packages';
 
 export function parseGameState(

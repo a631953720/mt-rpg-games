@@ -13,6 +13,7 @@
     "paths": {
       "#/*": ["src/*"],
       "#types/*": ["src/types/*"],
+      "#types/": ["src/types"],
       "#configs": ["src/configs"],
       "#configs/*": ["src/configs/*"],
       "#database/*": ["src/database/*"],
@@ -28,8 +29,10 @@
       "#RoundManager/*": ["src/packages/RoundManager/*"],
       "#Monster": ["src/packages/Monster"],
       "#Monster/*": ["src/packages/Monster/*"],
+      "#utils": ["src/packages/utils"],
+      "#utils/*": ["src/packages/utils/*"],
       "#services": ["src/services"],
-      "#services/*": ["src/services/*"]
+      "#services/*": ["src/services/*"],
     }
   },
   "include": ["src/**/*"]

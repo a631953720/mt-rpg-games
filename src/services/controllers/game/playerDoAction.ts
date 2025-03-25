@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { SessionData } from 'express-session';
 import { MergedGameState, roundManager } from '#RoundManager';
+import { setGameState } from '#utils';
 
 export async function playerDoAction(
   req: Request,
@@ -84,8 +85,7 @@ export async function playerDoAction(
       true,
     );
 
-    (req.session as SessionData & { gameState?: MergedGameState }).gameState =
-      newGameState;
+    setGameState(req, res, newGameState);
 
     res.status(201).json({ data: newGameState });
   } catch (error) {

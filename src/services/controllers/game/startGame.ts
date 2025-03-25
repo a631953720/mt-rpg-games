@@ -7,6 +7,7 @@ import {
   RoundManager,
 } from '#RoundManager';
 import { makeRandomStage1Monster } from '#Monster';
+import { setGameState } from '#utils';
 
 export async function startGame(
   req: Request,
@@ -34,8 +35,7 @@ export async function startGame(
     gameLogs: [],
   });
 
-  (req.session as SessionData & { gameState?: FullGameState }).gameState =
-    newGameState;
+  setGameState(req, res, newGameState);
 
   res.status(200).json({ data: { gameState: newGameState } });
 }

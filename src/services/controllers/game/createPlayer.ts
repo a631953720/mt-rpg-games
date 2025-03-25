@@ -2,6 +2,7 @@ import { SessionData } from 'express-session';
 import { Request, Response } from 'express';
 import { PlayerFactory } from '#Player';
 import { BaseGameState, MergedGameState, RoundManager } from '#RoundManager';
+import { setGameState } from '#utils';
 
 export async function createPlayer(
   req: Request,
@@ -25,8 +26,11 @@ export async function createPlayer(
       name: data.name,
     });
 
-    (req.session as SessionData & { gameState?: BaseGameState }).gameState =
-      RoundManager.generateGameState(playerFactory.createDefault(player));
+    setGameState(
+      req,
+      res,
+      RoundManager.generateGameState(playerFactory.createDefault(player)),
+    );
 
     // TODO: add to database
 
