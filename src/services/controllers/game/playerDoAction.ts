@@ -31,6 +31,7 @@ export async function playerDoAction(
       return;
     }
 
+    // TODO: roleWillDo 就有判斷了，可以合併
     if (action === 'attack') {
       roundManager.roleWillDo({
         role: player,
