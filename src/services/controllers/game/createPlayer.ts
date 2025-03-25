@@ -1,7 +1,7 @@
-import { SessionData } from 'express-session';
 import { Request, Response } from 'express';
 import { PlayerFactory } from '#Player';
-import { BaseGameState, MergedGameState, RoundManager } from '#RoundManager';
+import { whirlwindSlash, emergencyHeal } from '#packages/Skills';
+import { MergedGameState, RoundManager } from '#RoundManager';
 import { setGameState } from '#utils';
 
 export async function createPlayer(
@@ -24,6 +24,7 @@ export async function createPlayer(
     // TODO: check is player exist
     const player = playerFactory.createDefault({
       name: data.name,
+      skills: [whirlwindSlash, emergencyHeal],
     });
 
     setGameState(

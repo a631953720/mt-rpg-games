@@ -46,6 +46,17 @@ async function playerAction(action) {
   }
 }
 
+async function useSkill(skillID) {
+  try {
+    await axios.post(
+      `http://localhost:3000/api/v1/game/player/action?action=skill&skillID=${skillID}`,
+    );
+    await getState();
+  } catch (err) {
+    log(`❌ 使用技能失敗 (ID ${skillID})：` + err.message);
+  }
+}
+
 async function getState() {
   try {
     const res = await axios.get('http://localhost:3000/api/v1/game/state');

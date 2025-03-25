@@ -1,5 +1,6 @@
 import { ActionTypes } from '#packages/types';
 import { ActionBy, BaseRole, Role as IRole } from './types';
+import { Skill } from '#packages/Skills';
 
 export class Role implements IRole {
   public id: number | null;
@@ -20,6 +21,7 @@ export class Role implements IRole {
   private attackCoefficient = 1;
   private defenseCoefficient = 1;
   private _beActionBy: ActionBy | null;
+  private _beActionBySelf: ActionBy | null;
   private _actionLogs: string[];
 
   public constructor(data: BaseRole) {
@@ -37,6 +39,7 @@ export class Role implements IRole {
     this.currentAction = null;
 
     this._beActionBy = null;
+    this._beActionBySelf = null;
     this._actionLogs = [];
   }
 
@@ -48,6 +51,10 @@ export class Role implements IRole {
     return this._beActionBy;
   }
 
+  public get beActionBySelf(): ActionBy | null {
+    return this._beActionBySelf;
+  }
+
   public addActionLog(message: string): void {
     this._actionLogs.push(message);
   }
@@ -56,7 +63,11 @@ export class Role implements IRole {
     this._actionLogs = [];
   }
 
-  public setActionBy(actionBy: Role, actionType: ActionTypes): this {
+  public setActionBy(
+    actionBy: Role,
+    actionType: ActionTypes,
+    skill?: Skill,
+  ): this {
     if (this.beActionBy !== null) {
       throw TypeError('beActionBy already set');
     }
@@ -64,6 +75,7 @@ export class Role implements IRole {
     this._beActionBy = {
       actionBy,
       actionType,
+      skill: skill ?? null,
     };
     return this;
   }
@@ -83,37 +95,58 @@ export class Role implements IRole {
     return this;
   }
 
+  public resetActionBySelf(): this {
+    this._beActionBySelf = null;
+    return this;
+  }
+
   public isAlive(): boolean {
     return this.hp > 0;
   }
 
-  public attackTo(target: Role): void {
+  public attackTo(target: Role, skill?: Skill): void {
     if (this.currentAction !== null) {
       throw new Error(`${this.name} already has action ${this.currentAction}`);
     }
 
     this.currentAction = 'attack';
-    target.setActionBy(this, 'attack');
+    target.setActionBy(this, 'attack', skill);
   }
 
-  public useDefense(): void {
+  public useDefense(skill?: Skill): void {
     if (this.currentAction !== null) {
       throw new Error(`${this.name} already has action ${this.currentAction}`);
     }
 
     this.currentAction = 'defense';
-    this.setDefenseCoefficient(this.defenseCoefficient + 0.2);
+    this._beActionBySelf = {
+      actionBy: this,
+      actionType: 'defense',
+      skill: skill ?? null,
+    };
+
+    // this.setDefenseCoefficient(this.defenseCoefficient + 0.2);
   }
 
-  public useRest(): void {
+  public useRest(skill?: Skill): void {
     if (this.currentAction !== null) {
       throw new Error(`${this.name} already has action ${this.currentAction}`);
     }
 
     this.currentAction = 'rest';
-    const finalHp = this.hp + Math.floor(this.maxHp / 4);
-
-    this.hp = finalHp > this.maxHp ? this.maxHp : finalHp;
+    this._beActionBySelf = {
+      actionBy: this,
+      actionType: 'rest',
+      skill: skill ?? null,
+    };
+    // TODO: 讓外部處理治療行為會比較好管
+    // const finalHp = this.hp + Math.floor(this.maxHp / 10);
+    //
+    // this.hp = finalHp > this.maxHp ? this.maxHp : finalHp;
+    //
+    // const finalMp = this.mp + Math.floor(this.maxMp / 10);
+    //
+    // this.mp = finalMp > this.maxMp ? this.maxMp : finalMp;
   }
 
   public setAttackCoefficient(coefficient: number): this {

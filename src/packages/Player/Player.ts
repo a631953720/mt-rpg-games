@@ -5,16 +5,19 @@ import {
   PlayerJSON,
   PlayerNameBindings,
 } from './types';
+import { Skill } from '#packages/Skills';
 
 export class Player extends Role implements IPlayer {
   public currentExp: number;
   public nextLevelExp: number;
+  public skills: Skill[];
 
   public constructor(data: BasePlayer) {
     super(data);
 
     this.currentExp = data.currentExp;
     this.nextLevelExp = data.nextLevelExp;
+    this.skills = data.skills.map((skill) => new Skill(skill));
   }
 
   public toNameBinding(): PlayerNameBindings {
@@ -32,6 +35,7 @@ export class Player extends Role implements IPlayer {
       currentExp: this.currentExp,
       nextLevelExp: this.nextLevelExp,
       name: this.name,
+      skills: this.skills,
     };
   }
 
@@ -50,6 +54,7 @@ export class Player extends Role implements IPlayer {
       currentExp: this.currentExp,
       nextLevelExp: this.nextLevelExp,
       name: this.name,
+      skills: this.skills.map((skill) => skill.toJSON()),
     };
   }
 }

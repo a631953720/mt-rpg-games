@@ -18,6 +18,7 @@ export class PlayerFactory implements IPlayerFactory {
       mp: 50,
       nextLevelExp: 100,
       name: 'default',
+      skills: data?.skills ?? [],
       ...data,
     });
   }

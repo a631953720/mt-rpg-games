@@ -47,23 +47,48 @@ export class RoundManager implements IRoundManager {
     actionType,
     target,
     gameLogs,
+    skill,
   }: RoleWillDoOptions): void {
     if (role.currentAction !== null) {
       throw new Error(`${role.name} has been action: ${role.currentAction}`);
     }
 
+    if (!skill) {
+      if (actionType === 'attack') {
+        role.attackTo(target);
+        const msg = `${role.name} 攻擊了 ${target.name}`;
+        role.addActionLog(msg);
+        gameLogs.push(msg);
+      } else if (actionType === 'defense') {
+        role.useDefense();
+        const msg = `${role.name} 使用了防禦`;
+        role.addActionLog(msg);
+        gameLogs.push(msg);
+      } else if (actionType === 'rest') {
+        role.useRest();
+        const msg = `${role.name} 休息一下並恢復血量與魔力`;
+        role.addActionLog(msg);
+        gameLogs.push(msg);
+      }
+
+      return;
+    }
+
     if (actionType === 'attack') {
-      role.attackTo(target);
-      role.addActionLog(`${role.name} 攻擊了 ${target.name}`);
-      gameLogs.push(`${role.name} 攻擊了 ${target.name}`);
+      role.attackTo(target, skill);
+      const msg = `${role.name} 使用 ${skill.name} 攻擊了 ${target.name}`;
+      role.addActionLog(msg);
+      gameLogs.push(msg);
     } else if (actionType === 'defense') {
-      role.useDefense();
-      role.addActionLog(`${role.name} 使用了防禦`);
-      gameLogs.push(`${role.name} 使用了防禦`);
+      role.useDefense(skill);
+      const msg = `${role.name} 使用 ${skill.name} 增強防禦`;
+      role.addActionLog(msg);
+      gameLogs.push(msg);
     } else if (actionType === 'rest') {
-      role.useRest();
-      role.addActionLog(`${role.name} 休息一下並恢復血量`);
-      gameLogs.push(`${role.name} 休息一下並恢復血量`);
+      role.useRest(skill);
+      const msg = `${role.name} 使用 ${skill.name} 恢復血量`;
+      role.addActionLog(msg);
+      gameLogs.push(msg);
     }
   }
 
@@ -78,7 +103,11 @@ export class RoundManager implements IRoundManager {
         return;
       }
 
-      const { actionBy, actionType } = currentRole.beActionBy;
+      const { actionBy, actionType, skill } = currentRole.beActionBy;
+
+      if (skill) {
+        actionBy.mp -= skill.consumeMp;
+      }
 
       if (!actionBy.isAlive()) {
         gameLogs.push(`因 ${actionBy.name} 已死亡，${actionType} 指令沒有執行`);
@@ -90,6 +119,7 @@ export class RoundManager implements IRoundManager {
           role: actionBy as Role,
           target: currentRole,
           gameLogs,
+          skill,
         });
 
         hpCalculator({
@@ -98,10 +128,59 @@ export class RoundManager implements IRoundManager {
           shouldResetActionBy: true,
           gameLogs,
         });
+      }
+    });
+  }
 
-        if (currentRole.currentAction === 'defense') {
-          currentRole.resetDefenseCoefficient();
+  public calculateRoleActionsFromActionBySelf(
+    role: Role | Role[],
+    gameLogs: string[],
+  ): void {
+    const roles = Array.isArray(role) ? role : [role];
+
+    roles.forEach((currentRole) => {
+      if (currentRole.beActionBySelf === null) {
+        return;
+      }
+
+      const { actionBy, actionType, skill } = currentRole.beActionBySelf;
+
+      if (skill) {
+        actionBy.mp -= skill.consumeMp;
+      }
+
+      if (!actionBy.isAlive()) {
+        gameLogs.push(`因 ${actionBy.name} 已死亡，${actionType} 指令沒有執行`);
+        return;
+      }
+
+      if (actionType === 'defense') {
+        if (skill && skill.actionType === 'defense') {
+          currentRole.setDefenseCoefficient(skill.coefficient);
+        } else {
+          currentRole.setDefenseCoefficient(1.2);
         }
+        gameLogs.push(
+          `${currentRole.name} 防禦力暫時提升至 ${currentRole.getCurrentDefense()}`,
+        );
+      } else if (actionType === 'rest') {
+        let healHp = Math.floor(currentRole.maxHp / 10);
+
+        if (skill && skill.actionType === 'rest') {
+          // 治癒量乘以係數加上保底
+          healHp = Math.floor(healHp * skill.coefficient + skill.value);
+          this.increaseRoleHp(currentRole, healHp);
+
+          gameLogs.push(`${currentRole.name} 恢復 ${healHp} Hp`);
+          return;
+        }
+
+        this.increaseRoleHp(currentRole, healHp);
+
+        const healMp = Math.floor(currentRole.maxMp / 10);
+        this.increaseRoleMp(currentRole, healMp);
+
+        gameLogs.push(`${currentRole.name} 恢復 ${healHp} Hp 及 ${healMp} Mp`);
       }
     });
   }
@@ -117,6 +196,7 @@ export class RoundManager implements IRoundManager {
       return gameState;
     }
 
+    this.calculateRoleActionsFromActionBySelf([monster, player], gameLogs);
     this.calculateRoleActionsFromActionBy([monster, player], gameLogs);
 
     // monster is dead, player can get exp
@@ -155,11 +235,28 @@ export class RoundManager implements IRoundManager {
       };
     }
 
+    // reset all coefficient
+    [monster, player].forEach((r) => {
+      r.resetAttackCoefficient();
+      r.resetDefenseCoefficient();
+    });
+
     return {
       player,
       monster,
       gameLogs,
     };
+  }
+
+  // TODO: move to role
+  private increaseRoleHp(role: Role, increase: number): void {
+    const finalHp = (role.hp += increase);
+    role.hp = finalHp > role.maxHp ? role.maxHp : finalHp;
+  }
+
+  private increaseRoleMp(role: Role, increase: number): void {
+    const finalMp = (role.mp += increase);
+    role.mp = finalMp > role.maxMp ? role.maxMp : finalMp;
   }
 }
 

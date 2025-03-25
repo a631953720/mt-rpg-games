@@ -1,18 +1,33 @@
 import { Role } from '#packages';
+import { Skill } from '#packages/Skills';
 
 type Options = {
   role: Role;
   target: Role;
   gameLogs: string[];
+  skill: Skill | null;
 };
 
-export function damageCalculator({ role, target, gameLogs }: Options): number {
+export function damageCalculator({
+  role,
+  target,
+  gameLogs,
+  skill,
+}: Options): number {
   if (target.isDodged()) {
     gameLogs.push(`${target.name} 躲避了攻擊`);
     return 0;
   }
 
-  let dmg = role.getCurrentAttack() - target.getCurrentDefense();
+  let dmg;
+
+  if (skill && skill.actionType === 'attack') {
+    role.setAttackCoefficient(skill.coefficient);
+    dmg = role.getCurrentAttack() - target.getCurrentDefense() + skill.value;
+  } else {
+    dmg = role.getCurrentAttack() - target.getCurrentDefense();
+  }
+
   dmg = dmg > 0 ? dmg : 0;
 
   if (role.isCritical()) {

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { SessionData } from 'express-session';
 import { MergedGameState, roundManager } from '#RoundManager';
 import { setGameState } from '#utils';
 
@@ -11,7 +10,7 @@ export async function playerDoAction(
     const gameState = res.locals.gameState;
 
     // TODO: add validator
-    const { action } = req.query;
+    const { action, skillID } = req.query;
 
     if (!gameState) {
       res.status(400).json({ errors: ['missing game state'] });
@@ -53,6 +52,53 @@ export async function playerDoAction(
         target: player,
         gameLogs,
       });
+    } else if (action === 'skill') {
+      const skill = player.skills.find((s) => s.id === Number(skillID));
+      if (!skill) {
+        res.status(400).json({
+          errors: [
+            `missing skill id ${Number(skillID)} in player ${player.name}`,
+          ],
+        });
+        return;
+      }
+
+      if (skill.consumeMp > player.mp) {
+        res.status(400).json({
+          errors: [`${player.name} mp is not enough to us ${skill.name}`],
+        });
+        return;
+      }
+
+      if (skill.actionType === 'attack') {
+        roundManager.roleWillDo({
+          role: player,
+          actionType: 'attack',
+          target: monster,
+          gameLogs,
+          skill,
+        });
+      } else if (skill.actionType === 'defense') {
+        roundManager.roleWillDo({
+          role: player,
+          actionType: 'defense',
+          target: player,
+          gameLogs,
+          skill,
+        });
+      } else if (skill.actionType === 'rest') {
+        roundManager.roleWillDo({
+          role: player,
+          actionType: 'rest',
+          target: player,
+          gameLogs,
+          skill,
+        });
+      } else {
+        console.error(`un-support skill type ${skill.actionType}`);
+        res.status(500);
+        return;
+      }
     } else {
       res.status(400).json({ errors: [`un-support ${action} action`] });
       return;
