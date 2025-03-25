@@ -5,7 +5,8 @@
 }
 
 #information,
-#gameLog {
+#gameLog,
+#gameFullLog{
     flex: 1; /* 兩邊平均寬度，可依需求調整 */
     padding: 15px;
     border: 1px solid #ccc;

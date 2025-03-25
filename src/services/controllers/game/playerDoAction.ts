@@ -24,7 +24,7 @@ export async function playerDoAction(
       return;
     }
 
-    const { player, monster, gameLogs } = gameState;
+    const { player, monster, gameLogs, currentRoundLogs } = gameState;
 
     if (!monster.isAlive() || !player.isAlive()) {
       res.status(400).json({ errors: ['someone dead. can not do anything'] });
@@ -127,6 +127,7 @@ export async function playerDoAction(
         player,
         monster,
         gameLogs,
+        currentRoundLogs,
       },
       true,
     );

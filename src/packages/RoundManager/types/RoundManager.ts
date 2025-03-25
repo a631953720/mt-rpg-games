@@ -14,6 +14,7 @@ export type RoleWillDoOptions = {
 export type BaseGameState = {
   player: Player;
   gameLogs: string[];
+  currentRoundLogs: string[];
 };
 
 export type FullGameState = BaseGameState & {

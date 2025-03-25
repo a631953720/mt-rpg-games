@@ -6,14 +6,14 @@ export function generateMonsterByLevel(
 ): BaseMonster {
   const isIncrease = Math.random() > 0.5;
   const coefficients = isIncrease
-    ? 1 + Math.random() * 0.1
+    ? 1 + Math.random() * 0.2
     : 1 - Math.random() * 0.1;
 
   const hp = Math.floor(25 * level * 2 * coefficients);
   const mp = Math.floor(50 * level * coefficients);
 
   return {
-    attack: Math.floor(10 * level * coefficients) + 1,
+    attack: Math.floor(12 * level * coefficients) + 1,
     criticalRate: 0.05 * Math.floor(level / 5),
     defense: Math.floor(5 * level * coefficients),
     dodgeRate: 0.05 * Math.floor(level / 5),

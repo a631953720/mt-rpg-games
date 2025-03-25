@@ -14,10 +14,12 @@ export class RoundManager implements IRoundManager {
   public static generateGameState(
     player: Player,
     gameLogs?: string[],
+    currentRoundLogs?: string[],
   ): BaseGameState {
     return {
       player,
       gameLogs: gameLogs ?? [],
+      currentRoundLogs: currentRoundLogs ?? [],
     };
   }
 
@@ -33,12 +35,14 @@ export class RoundManager implements IRoundManager {
         // @ts-expect-error
         monster: new Monster(gameState.monster),
         gameLogs: gameState.gameLogs,
+        currentRoundLogs: gameState.currentRoundLogs,
       };
     }
 
     return {
       player: new Player(gameState.player),
       gameLogs: gameState.gameLogs,
+      currentRoundLogs: gameState.currentRoundLogs,
     };
   }
 
@@ -190,6 +194,7 @@ export class RoundManager implements IRoundManager {
     shouldResetCurrentAction: boolean,
   ): MergedGameState {
     const { player, monster, gameLogs } = gameState;
+    const startIndex = gameLogs.length - 1;
 
     if (player.currentAction === null || monster.currentAction === null) {
       console.warn('player missing action');
@@ -232,6 +237,7 @@ export class RoundManager implements IRoundManager {
       return {
         player,
         gameLogs,
+        currentRoundLogs: gameLogs.slice(startIndex - 1, gameLogs.length),
       };
     }
 
@@ -245,6 +251,7 @@ export class RoundManager implements IRoundManager {
       player,
       monster,
       gameLogs,
+      currentRoundLogs: gameLogs.slice(startIndex - 1, gameLogs.length),
     };
   }
 

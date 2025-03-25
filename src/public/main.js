@@ -1,5 +1,6 @@
 const informationDiv = document.getElementById('information');
 const gameLogDiv = document.getElementById('gameLog');
+const gameFullLogDiv = document.getElementById('gameFullLog');
 
 getState();
 
@@ -61,7 +62,8 @@ async function getState() {
   try {
     const res = await axios.get('http://localhost:3000/api/v1/game/state');
     if (res.data && typeof res.data === 'object') {
-      const { player, monster, gameLogs } = res.data.data.gameState;
+      const { player, monster, gameLogs, currentRoundLogs } =
+        res.data.data.gameState;
 
       // 清空舊內容
       informationDiv.innerText = '';
@@ -97,8 +99,14 @@ async function getState() {
 
       // 遊戲紀錄
       gameLogDiv.innerText = '📜 遊戲紀錄\n';
-      gameLogDiv.innerText += gameLogs.map((msg) => `${msg}\n`).join('');
+      gameLogDiv.innerText += currentRoundLogs
+        .map((msg) => `${msg}\n`)
+        .join('');
       gameLogDiv.scrollTop = gameLogDiv.scrollHeight;
+
+      gameFullLogDiv.innerText = '📜 遊戲完整紀錄\n';
+      gameFullLogDiv.innerText += gameLogs.map((msg) => `${msg}\n`).join('');
+      gameFullLogDiv.scrollTop = gameFullLogDiv.scrollHeight;
     }
   } catch (err) {
     console.error(err);
